@@ -76,7 +76,7 @@ func mustCreateStream(input, output *portaudio.DeviceInfo) *portaudio.Stream {
 		for i := 0; i < frames; i++ {
 			buffer[i] = in[i*2] // лише правий вхід
 		}
-		ds := &effect.BossDistortion{
+		ds := &effect.Distortion{
 			Gain:     8.0,
 			Level:    0.9,
 			HardClip: true, // або true для square-style

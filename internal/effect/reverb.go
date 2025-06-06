@@ -4,7 +4,7 @@ type Reverb struct {
 	delayBuffer  []float32
 	writeIndex   int
 	delaySamples int
-	decay        float32 // 0.0 - 1.0
+	decay        float32
 }
 
 func NewReverb(sampleRate float64, delayMs float64, decay float32) *Reverb {

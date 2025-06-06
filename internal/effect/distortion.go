@@ -1,6 +1,6 @@
 package effect
 
-type BossDistortion struct {
+type Distortion struct {
 	Gain     float32
 	Level    float32
 	HardClip bool
@@ -25,7 +25,7 @@ func hardClip(x float32) float32 {
 	return x
 }
 
-func (d *BossDistortion) Process(samples []float32) {
+func (d *Distortion) Process(samples []float32) {
 	for i := range samples {
 		s := samples[i] * d.Gain
 
