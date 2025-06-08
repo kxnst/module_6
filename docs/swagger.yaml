@@ -1,0 +1,159 @@
+definitions:
+  dsp.Device:
+    properties:
+      channels:
+        type: integer
+      hostApiName:
+        type: string
+      index:
+        type: integer
+      name:
+        type: string
+      sampleRate:
+        type: number
+      type:
+        type: integer
+    type: object
+  dsp.EffectInfo:
+    properties:
+      dspType:
+        type: string
+      name:
+        type: string
+      parameterDefinitions:
+        items: {}
+        type: array
+      slug:
+        type: string
+    type: object
+  handlers.AuthResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  request.AuthRequest:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  request.DeviceInfoRequest:
+    properties:
+      bufferSize:
+        type: integer
+      device1Index:
+        type: integer
+      device2Index:
+        type: integer
+      sampleRate:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: authorization and token creation
+      parameters:
+      - description: Auth data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            $ref: '#/definitions/handlers.AuthResponse'
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: authorization
+      tags:
+      - Auth
+  /devices:
+    get:
+      consumes:
+      - application/json
+      description: Returns list of available devices
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: devices list
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/dsp.Device'
+              type: array
+            type: array
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Get devices list
+      tags:
+      - Devices
+  /effects:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dsp.EffectInfo'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Отримати список доступних ефектів
+      tags:
+      - effects
+  /ws:
+    post:
+      consumes:
+      - application/json
+      description: Receives I/O configuration
+      parameters:
+      - description: Інформація про пристрої
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/request.DeviceInfoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: error
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Initialize session
+      tags:
+      - websocket
+swagger: "2.0"

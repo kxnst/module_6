@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизація</title>
+    <style>
+        body { font-family: sans-serif; display: flex; height: 100vh; justify-content: center; align-items: center; background: #f3f4f6; }
+        .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .card h2 { margin-bottom: 1rem; }
+        .input-group { margin-bottom: 1rem; }
+        .input-group input { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 0.5rem; }
+        .button { padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 0.5rem; cursor: pointer; width: 100%; }
+        .error { color: red; margin-top: 1rem; }
+        .success { color: green; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>Авторизація</h2>
+    <div class="input-group">
+        <input type="text" id="uri" placeholder="URI" value="http://localhost:3000">
+    </div>
+    <div class="input-group">
+        <input type="text" id="login" placeholder="Логін">
+    </div>
+    <div class="input-group">
+        <input type="password" id="password" placeholder="Пароль">
+    </div>
+    <button class="button" onclick="handleLogin()">Увійти</button>
+    <div id="message"></div>
+</div>
+
+<script>
+    async function handleLogin() {
+        const uri = document.getElementById('uri').value;
+        const login = document.getElementById('login').value;
+        const password = document.getElementById('password').value;
+        const message = document.getElementById('message');
+
+        message.textContent = '';
+        message.className = '';
+
+        try {
+            const res = await fetch(`${uri}/auth`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ login, password })
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || 'Помилка авторизації');
+            }
+
+            const data = await res.json();
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('uri', uri);
+
+            message.textContent = 'Успішна авторизація';
+            message.className = 'success';
+
+            window.location.href = "/client/effects";
+        } catch (err) {
+            message.textContent = err.message;
+            message.className = 'error';
+        }
+    }
+</script>
+</body>
+</html>
