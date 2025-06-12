@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DATABASE: dsp
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    command: >
+      sh -c "
+        ./bin/collection &&
+        ./bin/user &&
+        ./bin/effect &&
+        ./bin/server & ./bin/client && wait
+      "
+
+  mongo:
+    image: mongo:5
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27017:27017"
